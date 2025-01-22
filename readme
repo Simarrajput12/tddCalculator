@@ -1,0 +1,94 @@
+Explanation of the code:
+
+class StringCalculator {
+Defines a class StringCalculator. The class contains methods to handle string calculations.
+
+add(numbers) {
+Declares a method add in the StringCalculator class. This method takes a single parameter numbers, which is a string of numbers separated by regex.
+
+    if (!numbers) return 0; // Handle empty string
+
+Checks if the input numbers is empty (null, undefined, or an empty string). If it is, the method immediately returns 0.
+
+    let regex = /,|\n/; // Default regex: comma and newline
+
+Defines the default regex for splitting numbers, which are a comma , or a newline \n. The | represents an "or" in the regular expression.
+
+    if (numbers.startsWith("//")) {
+
+Checks if the input starts with "//", which indicates the presence of a custom regex.
+
+      const parts = numbers.split("\n", 2);
+
+Splits the string into two parts using the first newline \n as the separator.
+parts[0] contains the custom regex definition (e.g., "//;").
+parts[1] contains the actual numbers string.
+
+      regex = new RegExp(parts[0].slice(2)); // Extract and create regex for custom regex
+
+Extracts the custom regex from parts[0] by slicing off the "//" prefix. It then converts the regex into a regular expression for splitting the numbers.
+
+      numbers = parts[1];
+
+Updates the numbers string to exclude the custom regex definition. It now contains only the actual numbers.
+
+    }
+
+Ends the if block for checking and handling custom regexs.
+
+    const numArray = numbers.split(regex).map(Number);
+
+Splits the numbers string using the defined regex (default or custom).
+Converts each substring to a number using map(Number).
+
+    const negatives = numArray.filter(n => n < 0); // Check for negatives
+
+Filters the numArray to find all negative numbers.
+
+    if (negatives.length) {
+
+Checks if there are any negative numbers.
+
+      throw new Error(`Negative numbers not allowed: ${negatives.join(", ")}`);
+
+If there are negative numbers, it throws an error with a message listing all of them.
+
+    }
+
+Ends the if block for handling negatives.
+
+    return numArray.reduce((sum, num) => sum + num, 0); // Calculate sum
+
+Uses the reduce method to calculate the sum of all numbers in numArray. The second argument 0 initializes the sum to 0.
+
+}
+Ends the add method.
+
+}
+Ends the StringCalculator class.
+
+const calculator = new StringCalculator();
+Creates an instance of the StringCalculator class to use for testing.
+
+// Test cases
+console.log(calculator.add("")); // Output: 0
+Tests the case of an empty string input. The output is 0.
+
+console.log(calculator.add("1")); // Output: 1
+Tests the case of a single number input. The output is 1.
+
+console.log(calculator.add("1,5")); // Output: 6
+Tests two numbers separated by a comma. The output is their sum, 6.
+
+console.log(calculator.add("1\n2,3")); // Output: 6
+Tests a mix of newlines and commas as regexs. The output is 6.
+
+console.log(calculator.add("//;\n1;2")); // Output: 3
+Tests a custom regex (;). The output is 3.
+
+try {
+console.log(calculator.add("1,-2,3,-4")); // Should throw an error
+} catch (e) {
+console.error(e.message); // Output: Negative numbers not allowed: -2, -4
+}
+Tests negative numbers. An exception is thrown, and the error message lists the negative numbers. The try...catch block catches and logs the error.
